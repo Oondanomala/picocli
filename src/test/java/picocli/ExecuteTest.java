@@ -15,6 +15,7 @@
  */
 package picocli;
 
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.ProvideSystemProperty;
@@ -1625,6 +1626,12 @@ public class ExecuteTest {
             expected.set(i, replaced);
         }
         assertEquals(expected, lines);
+    }
+
+    @Before
+    public void disableAnsi() {
+        // Force reevaluation of enabled()
+        Help.Ansi.ansiEnabled = null;
     }
 }
 

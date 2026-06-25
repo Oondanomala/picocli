@@ -502,9 +502,11 @@ public class HelpAnsiHeuristicsTest {
                     assertTrue(Ansi.AUTO.enabled());
 
                     System.setProperty("picocli.ansi", "Auto");
+                    Ansi.ansiEnabled = null; // Force reevaluation of enabled()
                     assertTrue(Ansi.AUTO.enabled());
 
                     System.setProperty("picocli.ansi", "AUTO");
+                    Ansi.ansiEnabled = null;
                     assertTrue(Ansi.AUTO.enabled());
                 });
             });
@@ -572,6 +574,7 @@ public class HelpAnsiHeuristicsTest {
                 assertTrue(Ansi.hintDisabled());
                 assertTrue(Ansi.forceEnabled());
                 assertFalse(Ansi.hintEnabled());
+                Ansi.ansiEnabled = null; // Force reevaluation of enabled()
                 assertTrue(Ansi.AUTO.enabled(), "forceEnabled overrides hintDisabled");
             });
 
@@ -587,6 +590,7 @@ public class HelpAnsiHeuristicsTest {
                 assertTrue(Ansi.hintDisabled());
                 assertTrue(Ansi.forceEnabled());
                 assertFalse(Ansi.hintEnabled());
+                Ansi.ansiEnabled = null; // Force reevaluation of enabled()
                 assertTrue(Ansi.AUTO.enabled(), "forceEnabled overrides hintDisabled 2");
             });
     }
@@ -617,7 +621,7 @@ public class HelpAnsiHeuristicsTest {
                     // have been set in a previous test to force the
                     // Ansi#isJansiConsoleInstalled method to recalculate
                     // the cached value.
-                    Ansi.jansiInstalled = null;
+                    //Ansi.jansiInstalled = null;
                     AnsiConsole.systemInstall();
                     try {
                         assertTrue(Ansi.isJansiConsoleInstalled());
@@ -634,7 +638,7 @@ public class HelpAnsiHeuristicsTest {
         restoreSystemProperties(() -> {
 
             System.setProperty("os.name", "Windows");
-            Ansi.jansiInstalled = null;
+            //Ansi.jansiInstalled = null;
             withEnvironmentVariable(ANSI_ENVIRONMENT_VARIABLES[0], null)
                 .and(ANSI_ENVIRONMENT_VARIABLES[1], null)
                 .and(ANSI_ENVIRONMENT_VARIABLES[2], null)
@@ -643,11 +647,10 @@ public class HelpAnsiHeuristicsTest {
                 .and(ANSI_ENVIRONMENT_VARIABLES[5], null)
                 .and(ANSI_ENVIRONMENT_VARIABLES[6], null)
                 .execute(() -> {
-
                         assertTrue(Ansi.isWindows());
                     });
 
-            withEnvironmentVariable(ANSI_ENVIRONMENT_VARIABLES[TERM], "xterm")// fake Cygwi
+            withEnvironmentVariable(ANSI_ENVIRONMENT_VARIABLES[TERM], "xterm")// fake Cygwin
                 .and(ANSI_ENVIRONMENT_VARIABLES[1], null)
                 .and(ANSI_ENVIRONMENT_VARIABLES[2], null)
                 .and(ANSI_ENVIRONMENT_VARIABLES[ANSICON], "1") // hint enabled
@@ -675,6 +678,7 @@ public class HelpAnsiHeuristicsTest {
                     assertTrue(Ansi.hintDisabled());
                     assertTrue(Ansi.hintEnabled());
 
+                    Ansi.ansiEnabled = null; // Force reevaluation of enabled()
                     assertFalse(Ansi.AUTO.enabled(), "Disabled overrides enabled");
                 });
         });
@@ -695,7 +699,7 @@ public class HelpAnsiHeuristicsTest {
                 restoreSystemProperties(() -> {
 
                     System.setProperty("os.name", "Windows");
-                    Ansi.jansiInstalled = null;
+                    //Ansi.jansiInstalled = null;
                     assertTrue(Ansi.isWindows());
                     assertFalse(Ansi.isPseudoTTY());
                     assertFalse(Ansi.isJansiConsoleInstalled());
@@ -770,6 +774,7 @@ public class HelpAnsiHeuristicsTest {
             .execute(() -> {
                 restoreSystemProperties(() -> {
                     System.setProperty("os.name", "Windows");
+                    Ansi.ansiEnabled = null; // Force reevaluation of enabled()
 
                     assertTrue(Ansi.isPseudoTTY());
                     assertTrue(Ansi.AUTO.enabled(), "If have Cygwin pseudo-TTY, enabled on Windows");
@@ -786,6 +791,7 @@ public class HelpAnsiHeuristicsTest {
             .execute(() -> {
                 restoreSystemProperties(() -> {
                     System.setProperty("os.name", "Windows");
+                    Ansi.ansiEnabled = null; // Force reevaluation of enabled()
 
                     assertTrue(Ansi.isPseudoTTY());
                     assertTrue(Ansi.AUTO.enabled(), "If have Cygwin pseudo-TTY, enabled on Windows");
@@ -802,6 +808,7 @@ public class HelpAnsiHeuristicsTest {
             .execute(() -> {
                 restoreSystemProperties(() -> {
                     System.setProperty("os.name", "Windows");
+                    Ansi.ansiEnabled = null; // Force reevaluation of enabled()
 
                     assertTrue(Ansi.isPseudoTTY());
                     assertTrue(Ansi.AUTO.enabled(), "If have MSYS pseudo-TTY, enabled on Windows");

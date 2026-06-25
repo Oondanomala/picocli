@@ -119,7 +119,7 @@ public class Issue1125_1538_OptionNameOrSubcommandAsOptionValue {
         // have been set in a previous test to force the
         // Ansi#isJansiConsoleInstalled method to recalculate
         // the cached value.
-        Ansi.jansiInstalled = null;
+        //Ansi.jansiInstalled = null;
         int exitCode = cmdLine.execute("-x", "-y=123");
         assertEquals(2, exitCode);
         String expected = String.format("" +

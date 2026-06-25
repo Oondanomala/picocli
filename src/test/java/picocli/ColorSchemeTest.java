@@ -1,5 +1,6 @@
 package picocli;
 
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.ProvideSystemProperty;
@@ -286,5 +287,9 @@ public class ColorSchemeTest {
         assertNotSame(map, builder.customMarkupMap());
     }
 
-
+    @Before
+    public void disableAnsi() {
+        // Force reevaluation of enabled()
+        Help.Ansi.ansiEnabled = null;
+    }
 }

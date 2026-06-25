@@ -1,7 +1,7 @@
 package picocli;
 
 
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledForJreRange;
 import org.junit.jupiter.api.condition.JRE;
@@ -511,13 +511,10 @@ public class AutoCompleteSystemExitTest {
             CommandLine.VERSION);
     }
 
-    @BeforeAll
-    static void disableAnsi() {
-        // Clear the globally cached jansiInstalled value that might
-        // have been set in a previous test to force the
-        // Ansi#isJansiConsoleInstalled method to recalculate
-        // the cached value.
-        Ansi.jansiInstalled = null;
+    @BeforeEach
+    void disableAnsi() {
+        // Force reevaluation of enabled()
+        Ansi.ansiEnabled = null;
     }
 
     @Test

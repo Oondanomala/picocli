@@ -113,12 +113,15 @@ public class HelpAnsiTest {
         assertEquals(hasConsole, Ansi.AUTO.enabled());
 
         System.setProperty("picocli.ansi", "true");
+        Ansi.ansiEnabled = null; // Force reevaluation of enabled()
         assertEquals(true, Ansi.AUTO.enabled());
 
         System.setProperty("picocli.ansi", "false");
+        Ansi.ansiEnabled = null;
         assertEquals(false, Ansi.AUTO.enabled());
 
         System.clearProperty("picocli.ansi");
+        Ansi.ansiEnabled = null;
         boolean isWindows = System.getProperty("os.name").startsWith("Windows");
         boolean isXterm   = System.getenv("TERM") != null && System.getenv("TERM").startsWith("xterm");
         boolean isCygwin  = System.getenv("TERM") != null && System.getenv("TERM").toLowerCase(Locale.ENGLISH).contains("cygwin");
@@ -130,9 +133,7 @@ public class HelpAnsiTest {
         if (isWindows && !Ansi.AUTO.enabled()) {
             AnsiConsole.systemInstall();
 
-            // The previous Ansi.enabled() call caches the result for whether or not jansi is enabled.  Reset the cache value
-            // and force the Ansi.enabled() call to rescan the classpath for the jansi classes.
-            Ansi.jansiInstalled = null;
+            Ansi.ansiEnabled = null; // Force reevaluation of enabled()
             try {
                 assertTrue(Ansi.AUTO.enabled());
             } finally {
