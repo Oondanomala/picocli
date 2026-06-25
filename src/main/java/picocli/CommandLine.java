@@ -17968,23 +17968,13 @@ public class CommandLine {
                 if (!isTTY() && !isPseudoTTY())               { return false; }
                 return hintEnabled() || !isWindows() || isXterm() || isCygwin() || hasOsType();
             }
-            /** Caches the result of method {@link #isJansiConsoleInstalled()} so it doesn't repeatedly
-             *  call Class#forName, which can cause performance issues. */
-            static Boolean jansiInstalled;
-            /** The first time this method is called, it invokes the
-             * {@link #calcIsJansiConsoleInstalled()} method, caches its result and returns this result;
-             * subsequently it returns the cached result. */
-            static boolean isJansiConsoleInstalled() {
-                if (jansiInstalled == null) { jansiInstalled = calcIsJansiConsoleInstalled(); }
-                return jansiInstalled;
-            }
             /** Returns {@code false} if either system properties {@code org.fusesource.jansi.Ansi.disable}
              * or {@code org.jline.jansi.Ansi.disable} are set to {@code "true"} (case-insensitive);
              * otherwise, returns {@code false} if the Jansi library is in the classpath but has been disabled
              * (either via the aforementioned system properties or via a Jansi API call);
              * otherwise, returns {@code true} if the Jansi library is in the classpath and has been installed.
              */
-            static boolean calcIsJansiConsoleInstalled() {
+            static boolean isJansiConsoleInstalled() {
                 try {
                     // first check if JANSI was explicitly disabled _without loading any JANSI classes_:
                     // see https://github.com/remkop/picocli/issues/1106
@@ -18024,6 +18014,11 @@ public class CommandLine {
                 }
             }
 
+            /**
+             * Caches whether ANSI escape codes will be used
+             * when the ANSI mode is {@link #AUTO}.
+             */
+            static Boolean ansiEnabled = null;
             /** Returns {@code true} if ANSI escape codes should be emitted, {@code false} otherwise.
              * @return ON: {@code true}, OFF: {@code false}, AUTO: if system property {@code "picocli.ansi"} has value
              *      {@code "tty"} (case-insensitive), then return {@code true} if either {@code System.console() != null}
@@ -18034,10 +18029,13 @@ public class CommandLine {
             public boolean enabled() {
                 if (this == ON)  { return true; }
                 if (this == OFF) { return false; }
-                String ansi = System.getProperty("picocli.ansi");
-                boolean auto = ansi == null || "AUTO".equalsIgnoreCase(ansi);
-                boolean tty = "TTY".equalsIgnoreCase(ansi) && (isTTY() || isPseudoTTY());
-                return auto ? ansiPossible() : tty || Boolean.getBoolean("picocli.ansi");
+                if (ansiEnabled == null) {
+                    String ansi = System.getProperty("picocli.ansi");
+                    boolean auto = ansi == null || "AUTO".equalsIgnoreCase(ansi);
+                    boolean tty = "TTY".equalsIgnoreCase(ansi) && (isTTY() || isPseudoTTY());
+                    ansiEnabled = auto ? ansiPossible() : tty || Boolean.getBoolean("picocli.ansi");
+                }
+                return ansiEnabled;
             }
             /**
              * Returns a new Text object for this Ansi mode, encapsulating the specified string
